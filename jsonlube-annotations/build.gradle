@@ -27,9 +27,16 @@ repositories {
     mavenCentral()
 }
 
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def bintray_user = properties.getProperty('BINTRAY_USER')
+def bintray_key = properties.getProperty('BINTRAY_KEY')
+
+
 bintray {
-    user = '${BINTRAY_USER}'
-    key = '${BINTRAY_KEY}'
+    user = bintray_user
+    key = bintray_key
     publish = true
     override = true
     publications = ['maven_android']
@@ -48,6 +55,11 @@ bintray {
     }
 }
 
+task sourceJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
 publishing {
     publications {
         maven_android(MavenPublication) {
@@ -55,6 +67,7 @@ publishing {
             version "1.0.0.2"
             artifactId "jsonlube-annotations"
             artifact("$buildDir/libs/jsonlube-annotations.jar")
+            artifact(sourceJar)
         }
     }
 }
