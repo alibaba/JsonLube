@@ -18,6 +18,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
+    buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "com.alibaba.jsonlube"
         minSdkVersion 14
@@ -36,10 +37,8 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    annotationProcessor 'com.alibaba.android:jsonlube-compiler:1.0.0.1@jar'
-    compile ('com.alibaba.android:jsonlube:1.0.0.1@aar'){
+    annotationProcessor 'com.alibaba.android:jsonlube-compiler:1.0.0.0@jar'
+    compile ('com.alibaba.android:jsonlube:1.0.0.3@aar'){
         transitive=true
     }
     compile 'com.alibaba:fastjson:1.1.68.android'
