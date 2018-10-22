@@ -6,13 +6,7 @@ JsonLube用于将Json对象转成JAVA Bean对象，不同于传统在运行时�
 ## 使用方式
 ### gradle配置
 ```gradle
-    repositories {
-        maven {
-            url "https://dl.bintray.com/zhangsl/maven"
-        }
-    }
-
-    annotationProcessor 'com.alibaba.android:jsonlube-compiler:1.0.0.2@jar'
+    annotationProcessor 'com.alibaba.android:jsonlube-compiler:1.0.0.0@jar'
     compile ('com.alibaba.android:jsonlube:1.0.0.3@aar'){
         transitive=true
     }

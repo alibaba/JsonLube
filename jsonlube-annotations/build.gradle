@@ -47,10 +47,10 @@ bintray {
         vcsUrl = 'https://github.com/alibaba/jsonlube'
 
         version {
-            name = '1.0.0.0'
+            name = '1.0.0.3'
             desc = 'A json parser generator in compile time.'
             released  = new Date()
-            vcsTag = '1.0.0.0'
+            vcsTag = '1.0.0.3'
         }
     }
 }
@@ -64,7 +64,7 @@ publishing {
     publications {
         maven_android(MavenPublication) {
             groupId "com.alibaba.android"
-            version "1.0.0.2"
+            version "1.0.0.3"
             artifactId "jsonlube-annotations"
             artifact("$buildDir/libs/jsonlube-annotations.jar")
             artifact(sourceJar)

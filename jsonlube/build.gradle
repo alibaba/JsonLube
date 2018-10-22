@@ -26,9 +26,6 @@ targetCompatibility = JavaVersion.VERSION_1_7
 repositories {
     mavenCentral()
     jcenter()
-    maven {
-        url "https://dl.bintray.com/zhangsl/maven"
-    }
 }
 
 Properties properties = new Properties()
@@ -50,10 +47,10 @@ bintray {
         vcsUrl = 'https://github.com/alibaba/jsonlube'
 
         version {
-            name = '1.0.0.2'
+            name = '1.0.0.3'
             desc = 'A json parser generator in compile time.'
             released  = new Date()
-            vcsTag = '1.0.0.2'
+            vcsTag = '1.0.0.3'
         }
     }
 }
@@ -67,7 +64,7 @@ publishing {
     publications {
         maven_android(MavenPublication) {
             groupId "com.alibaba.android"
-            version "1.0.0.2"
+            version "1.0.0.3"
             artifactId "jsonlube"
             artifact("$buildDir/outputs/aar/jsonlube-release.aar")
             artifact(sourceJar)
@@ -119,7 +116,6 @@ android {
 
 dependencies {
     compile files(fileTree(dir: 'lib', includes: ['*.jar']))
-//    compile project(':jsonlube-annotations')
-    compile group:'com.alibaba.android', name :'jsonlube-annotations', version :'1.0.0.2'
+    compile group:'com.alibaba.android', name :'jsonlube-annotations', version :'1.0.0.3'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
