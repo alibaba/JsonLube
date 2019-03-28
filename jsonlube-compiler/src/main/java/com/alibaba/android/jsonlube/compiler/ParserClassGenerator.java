@@ -16,29 +16,28 @@
 
 package com.alibaba.android.jsonlube.compiler;
 
-import com.alibaba.android.jsonlube.JsonLubeField;
-import com.alibaba.android.jsonlube.ProguardKeep;
-import com.alibaba.fastjson.annotation.JSONField;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeSpec;
-
-import javax.lang.model.element.*;
-import javax.lang.model.type.*;
-import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.element.Name;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.ArrayType;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
+
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.MethodSpec;
 
 import static com.alibaba.android.jsonlube.compiler.TypesUtils.ANDROID_JSON_ARRAY;
 import static com.alibaba.android.jsonlube.compiler.TypesUtils.ANDROID_JSON_OBJECT;
 
-
 /**
- * Created by shangjie on 2018/1/30.
+ * 自动生成反序列化代码
  */
-public class ParserClassGenerator extends AbstractGenerator{
+public class ParserClassGenerator extends AbstractGenerator {
 
     @Override
     protected String generateClassName(TypeElement type) {
@@ -49,13 +48,13 @@ public class ParserClassGenerator extends AbstractGenerator{
     @Override
     protected MethodSpec generateMethod(TypeElement clazz) {
         MethodSpec.Builder builder = MethodSpec.methodBuilder("parse")
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .returns(ClassName.get(clazz))
-                .addParameter(ANDROID_JSON_OBJECT, "data")
-                .beginControlFlow("if (data == null)")
-                .addStatement("return null")
-                .endControlFlow()
-                .addStatement("$T bean = new $T()", clazz, clazz);
+            .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+            .returns(ClassName.get(clazz))
+            .addParameter(ANDROID_JSON_OBJECT, "data")
+            .beginControlFlow("if (data == null)")
+            .addStatement("return null")
+            .endControlFlow()
+            .addStatement("$T bean = new $T()", clazz, clazz);
 
         generateFromField(clazz, builder);
         generateFromSetter(clazz, builder);
@@ -104,7 +103,6 @@ public class ParserClassGenerator extends AbstractGenerator{
         }
     }
 
-
     private void generateMethodBody(MethodSpec.Builder builder, TypeMirror type, String fieldName, String jsonName,
                                     boolean isGetterSetter, ExecutableElement setter, ExecutableElement getter) {
         if (isPrimaryOrString(type)) {
@@ -149,7 +147,7 @@ public class ParserClassGenerator extends AbstractGenerator{
             }
             builder.addStatement("$LArray[i] = item", fieldName);
             builder.endControlFlow();
-            setFieldValue(builder, fieldName, isGetterSetter, setter,"Array");
+            setFieldValue(builder, fieldName, isGetterSetter, setter, "Array");
             builder.endControlFlow();
 
         } else if (isAndroidJsonObject(type)) {
@@ -158,7 +156,8 @@ public class ParserClassGenerator extends AbstractGenerator{
             builder.addStatement("$T $LAndroidJson = data.optJSONObject($S)", ANDROID_JSON_OBJECT, fieldName, jsonName);
             builder.beginControlFlow("if ($LAndroidJson != null)", fieldName);
             builder.addStatement("$T $LStr = $LAndroidJson.toString()", String.class, fieldName, fieldName);
-            builder.addStatement("$T $LFastJson = $T.parseObject($LStr)", com.alibaba.fastjson.JSONObject.class, fieldName, com.alibaba.fastjson.JSON.class, fieldName);
+            builder.addStatement("$T $LFastJson = $T.parseObject($LStr)", com.alibaba.fastjson.JSONObject.class, fieldName, com.alibaba.fastjson.JSON.class,
+                fieldName);
             setFieldValue(builder, fieldName, isGetterSetter, setter, "FastJson");
             builder.endControlFlow();
         } else {
@@ -170,7 +169,6 @@ public class ParserClassGenerator extends AbstractGenerator{
             }
         }
     }
-
 
     private void setFieldValue(MethodSpec.Builder builder, String fieldName, boolean isGetterSetter, ExecutableElement setter, String suffix) {
         if (!isGetterSetter) {
@@ -191,10 +189,11 @@ public class ParserClassGenerator extends AbstractGenerator{
     private boolean isPrimaryOrString(TypeMirror typeMirror) {
         TypeKind kind = typeMirror.getKind();
         return kind == TypeKind.INT || TypesUtils.isString(typeMirror) || kind == TypeKind.LONG || kind == TypeKind.DOUBLE
-                || kind == TypeKind.FLOAT || kind == TypeKind.BYTE || TypesUtils.isBooleanType(typeMirror);
+            || kind == TypeKind.FLOAT || kind == TypeKind.BYTE || TypesUtils.isBooleanType(typeMirror);
     }
 
-    private boolean tryAddPrimaryAndStringStatement(MethodSpec.Builder builder, TypeMirror fieldClass, String fieldName, String jsonName, boolean isGetterSetter, ExecutableElement setter, ExecutableElement getter) {
+    private boolean tryAddPrimaryAndStringStatement(MethodSpec.Builder builder, TypeMirror fieldClass, String fieldName, String jsonName,
+                                                    boolean isGetterSetter, ExecutableElement setter, ExecutableElement getter) {
         if (fieldClass.getKind() == TypeKind.INT) {
             addPrimaryStatement(builder, fieldName, jsonName, "Int", isGetterSetter, setter, getter);
         } else if (TypesUtils.isString(fieldClass)) {
@@ -216,14 +215,13 @@ public class ParserClassGenerator extends AbstractGenerator{
         return true;
     }
 
-
     private boolean tryGetPrimaryAndStringFromArray(MethodSpec.Builder builder, TypeMirror fieldClass, String fieldName) {
         if (fieldClass.getKind() == TypeKind.INT) {
             getPrimaryFromArray(builder, int.class, fieldName, "Int");
         } else if (TypesUtils.isString(fieldClass)) {
             getPrimaryFromArray(builder, String.class, fieldName, "String");
         } else if (fieldClass.getKind() == TypeKind.LONG) {
-            getPrimaryFromArray(builder, long.class, fieldName,"Long");
+            getPrimaryFromArray(builder, long.class, fieldName, "Long");
         } else if (fieldClass.getKind() == TypeKind.DOUBLE) {
             getPrimaryFromArray(builder, double.class, fieldName, "Double");
         } else if (fieldClass.getKind() == TypeKind.FLOAT) {
@@ -238,10 +236,11 @@ public class ParserClassGenerator extends AbstractGenerator{
     }
 
     private void getPrimaryFromArray(MethodSpec.Builder builder, Class<?> type, String fieldName, String typeName) {
-        builder.addStatement("$T item = $LJsonArray.opt$L(i)", type,  fieldName, typeName);
+        builder.addStatement("$T item = $LJsonArray.opt$L(i)", type, fieldName, typeName);
     }
 
-    private void addPrimaryStatement(MethodSpec.Builder builder, String fieldName, String jsonName, String typeName, boolean isGetterSetter, ExecutableElement setter, ExecutableElement getter) {
+    private void addPrimaryStatement(MethodSpec.Builder builder, String fieldName, String jsonName, String typeName, boolean isGetterSetter,
+                                     ExecutableElement setter, ExecutableElement getter) {
         if (!isGetterSetter) {
             builder.addStatement("bean.$L = data.opt$L($S, bean.$L)", fieldName, typeName, jsonName, fieldName);
         } else {
@@ -253,12 +252,14 @@ public class ParserClassGenerator extends AbstractGenerator{
         }
     }
 
-    private void addPrimaryStatementWithCast(MethodSpec.Builder builder, Class<?> castType, String fieldName, String jsonName, String typeName, boolean isGetterSetter, ExecutableElement setter, ExecutableElement getter) {
+    private void addPrimaryStatementWithCast(MethodSpec.Builder builder, Class<?> castType, String fieldName, String jsonName, String typeName,
+                                             boolean isGetterSetter, ExecutableElement setter, ExecutableElement getter) {
         if (!isGetterSetter) {
             builder.addStatement("bean.$L = ($T) data.opt$L($S, bean.$L)", fieldName, castType, typeName, jsonName, fieldName);
         } else {
             if (getter != null) {
-                builder.addStatement("bean.$L(($T) data.opt$L($S, bean.$L()))", setter.getSimpleName().toString(), castType, typeName, jsonName, getter.getSimpleName().toString());
+                builder.addStatement("bean.$L(($T) data.opt$L($S, bean.$L()))", setter.getSimpleName().toString(), castType, typeName, jsonName,
+                    getter.getSimpleName().toString());
             } else {
                 builder.addStatement("bean.$L(($T) data.opt$L($S))", setter.getSimpleName().toString(), castType, typeName, jsonName);
             }

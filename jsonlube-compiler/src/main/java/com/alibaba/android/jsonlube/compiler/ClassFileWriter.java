@@ -59,7 +59,8 @@ public class ClassFileWriter {
         try {
             javaFile.writeTo(filer);
         } catch (IOException e) {
-//            e.printStackTrace();
+            //根据需要可以打开调试，默认情况下关掉，以免打包日志被干扰
+            //e.printStackTrace();
         }
     }
 

@@ -245,25 +245,40 @@ public final class TypesUtils {
         }
     }
 
-
+    /**
+     * 是否是Android原生的JsonObject对象
+     */
     public static boolean isAndroidJsonObject(TypeMirror typeMirror, Elements elements, Types types) {
         Element element = elements.getTypeElement(ANDROID_JSON_OBJECT.reflectionName());
         TypeMirror androidJsonObjectType = element.asType();
         return types.isAssignable(typeMirror, androidJsonObjectType);
     }
 
+    /**
+     * 是否是Android原生的JsonArray对象
+     */
     public static boolean isAndroidJsonArray(TypeMirror typeMirror, Elements elements, Types types) {
         Element element = elements.getTypeElement(ANDROID_JSON_ARRAY.reflectionName());
         TypeMirror androidJsonObjectType = element.asType();
         return types.isAssignable(typeMirror, androidJsonObjectType);
     }
 
+    /**
+     * 是否是FastJson的JsonObject对象
+     */
     public static boolean isFastJsonObject(TypeMirror typeMirror, Elements elements, Types types) {
         Element element = elements.getTypeElement(FASTJSON_OBJECT.reflectionName());
         TypeMirror androidJsonObjectType = element.asType();
         return types.isAssignable(typeMirror, androidJsonObjectType);
     }
 
+    /**
+     * 是否是FastJson的JsonArray对象
+     * @param typeMirror
+     * @param elements
+     * @param types
+     * @return
+     */
     public static boolean isFastJsonArray(TypeMirror typeMirror, Elements elements, Types types) {
         Element element = elements.getTypeElement(FASTJSON_ARRAY.reflectionName());
         TypeMirror androidJsonObjectType = element.asType();

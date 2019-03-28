@@ -82,15 +82,24 @@ public class ElementUtils {
         return element.getModifiers().contains(Modifier.FINAL);
     }
 
-
+    /**
+     * 是否是private成员
+     */
     public static boolean isPrivate(Element element) {
         return element.getModifiers().contains(Modifier.PRIVATE);
     }
 
+    /**
+     *
+     * 是否是public成员
+     */
     public static boolean isPublic(Element element) {
         return element.getModifiers().contains(Modifier.PUBLIC);
     }
 
+    /**
+     * 是否是protected成员
+     */
     public static boolean isProtected(Element element) {
         return element.getModifiers().contains(Modifier.PROTECTED);
     }
@@ -105,7 +114,9 @@ public class ElementUtils {
         return Collections.unmodifiableList(fields);
     }
 
-
+    /**
+     * 从类中查找对应的成员信息
+     */
     public static VariableElement findFieldIn(TypeElement type, String fieldName, Elements elements) {
         List<VariableElement> allFields = getAllFieldsIn(type, elements);
 
@@ -128,12 +139,17 @@ public class ElementUtils {
         return Collections.unmodifiableList(meths);
     }
 
-
+    /**
+     * 查找setter函数
+     */
     public static ExecutableElement findSetter(TypeElement type, VariableElement field, Elements elements, Types typeUtil) {
         List<ExecutableElement> methods = getAllMethodsIn(type, elements);
         return findSetter(methods, field, typeUtil);
     }
 
+    /**
+     * 查找setter函数
+     */
     public static ExecutableElement findSetter(List<ExecutableElement> methods, VariableElement field, Types typeUtil) {
         for (ExecutableElement method : methods) {
             String fieldName = field.getSimpleName().toString();
@@ -167,6 +183,9 @@ public class ElementUtils {
         return null;
     }
 
+    /**
+     * 查找setter函数
+     */
     public static ExecutableElement findSetter(List<ExecutableElement> methods, String fieldName, TypeMirror fieldType, Types typeUtil) {
         for (ExecutableElement method : methods) {
             String getterName = "set" + StringUtil.uppercaseFirstChar(fieldName);
@@ -196,6 +215,9 @@ public class ElementUtils {
         return null;
     }
 
+    /**
+     * 查找setter函数名称
+     */
     public static String findSetterName(List<ExecutableElement> methods, VariableElement field, Types typeUtil) {
         ExecutableElement method = findSetter(methods, field, typeUtil);
 
@@ -206,7 +228,9 @@ public class ElementUtils {
         return method.getSimpleName().toString();
     }
 
-
+    /**
+     * 查找getter函数
+     */
     public static ExecutableElement findGetter(List<ExecutableElement> methods, VariableElement field, Types typeUtil) {
         for (ExecutableElement method : methods) {
             String fieldName = field.getSimpleName().toString();
@@ -231,6 +255,9 @@ public class ElementUtils {
         return null;
     }
 
+    /**
+     * 查找getter函数
+     */
     public static ExecutableElement findGetter(List<ExecutableElement> methods, String fieldName, TypeMirror fieldType, Types typeUtil) {
         for (ExecutableElement method : methods) {
             String getterName = "get" + fieldName.substring(0,1).toUpperCase() + fieldName.substring(1);
@@ -253,6 +280,9 @@ public class ElementUtils {
         return null;
     }
 
+    /**
+     * 查找getter函数名称
+     */
     public static String findGetterName(List<ExecutableElement> methods, VariableElement field, Types typeUtil) {
         ExecutableElement method = findGetter(methods, field, typeUtil);
 
@@ -263,6 +293,9 @@ public class ElementUtils {
         return method.getSimpleName().toString();
     }
 
+    /**
+     * 获取成员变量Annotation的值
+     */
     public static String getFieldAnnotationValue(Element classType, Class annotationType, String attributeName) {
         String value = null;
 

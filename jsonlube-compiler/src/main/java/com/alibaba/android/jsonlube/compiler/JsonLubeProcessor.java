@@ -33,6 +33,7 @@ import java.util.Set;
 
 /**
  * Created by shangjie on 2018/2/5.
+ * 编译插件主入口
  */
 @AutoService(Processor.class)
 public class JsonLubeProcessor extends AbstractProcessor {
@@ -43,6 +44,10 @@ public class JsonLubeProcessor extends AbstractProcessor {
     private Elements mElementUtils;
     private Types mTypeUtils;
 
+    /**
+     * 初始化环境
+     * @param processingEnv
+     */
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
@@ -56,6 +61,9 @@ public class JsonLubeProcessor extends AbstractProcessor {
         mSerializerGenerator.init(mClassWriter, mElementUtils, mTypeUtils);
     }
 
+    /**
+     * 处理需要被序列化和反序列化的类
+     */
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         for (Element element : roundEnv.getElementsAnnotatedWith(FromJson.class)) {
@@ -82,6 +90,9 @@ public class JsonLubeProcessor extends AbstractProcessor {
         return false;
     }
 
+    /**
+     * 根据annotation配置需要处理的类
+     */
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> types = new LinkedHashSet<>();
@@ -98,7 +109,10 @@ public class JsonLubeProcessor extends AbstractProcessor {
         return annotations;
     }
 
-
+    /**
+     * 配置支持的java版
+     * @return
+     */
     @Override
     public SourceVersion getSupportedSourceVersion() {
         return SourceVersion.latestSupported();

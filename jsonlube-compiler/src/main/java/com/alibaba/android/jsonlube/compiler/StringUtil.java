@@ -17,13 +17,19 @@
 package com.alibaba.android.jsonlube.compiler;
 
 /**
- * Created by shangjie on 2018/1/31.
+ * 字符串操作类
  */
 public class StringUtil {
+    /**
+     * 是否为空
+     */
     public static boolean isEmpty(String value) {
         return value == null || value.length() == 0;
     }
 
+    /**
+     * 两个字符串是否相等
+     */
     public static boolean equals(String arg1, String arg2) {
         if (arg1 == null) {
             return arg1 == arg2;
@@ -32,12 +38,18 @@ public class StringUtil {
         return arg1.equals(arg2);
     }
 
+    /**
+     * 将字符串第一个字符改成小写
+     */
     public static String lowercaseFirstChar(String string) {
         char c[] = string.toCharArray();
         c[0] = Character.toLowerCase(c[0]);
         return new String(c);
     }
 
+    /**
+     * 将字符串第一个字符改成大写
+     */
     public static String uppercaseFirstChar(String string) {
         char c[] = string.toCharArray();
         c[0] = Character.toUpperCase(c[0]);

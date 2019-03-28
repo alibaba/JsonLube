@@ -36,12 +36,23 @@ public abstract class AbstractGenerator {
     protected Elements mElementUtils;
     protected Types mTypeUtils;
 
+    /**
+     * 初始化
+     * @param writer        负责写Class文件
+     * @param elements      操作Element对象的工具类
+     * @param typeUtils     操作Type对象的工具类
+     */
     public void init(ClassFileWriter writer, Elements elements, Types typeUtils) {
         mElementUtils = elements;
         mTypeUtils = typeUtils;
         mClassFileWriter = writer;
     }
 
+    /**
+     * 根据Type生成Class基本属性
+     * @param type
+     * @return
+     */
     public ClassName generateClass(TypeElement type) {
         String name = generateClassName(type);
         String packageName = ElementUtils.enclosingPackage(type).toString();
@@ -62,11 +73,21 @@ public abstract class AbstractGenerator {
         return className;
     }
 
+    /**
+     * 生成Class的类名
+     */
     protected abstract String generateClassName(TypeElement type);
 
+    /**
+     * 生成Method
+     * @param clazz
+     * @return
+     */
     protected abstract MethodSpec generateMethod(TypeElement clazz);
 
-
+    /**
+     * 判断无效的成员变量，包括：final修饰的成员，static成员，以及非public成员
+     */
     protected boolean invalidField(VariableElement field) {
 
         if (ElementUtils.isFinal(field) || ElementUtils.isStatic(field) || !ElementUtils.isPublic(field)) {
@@ -76,6 +97,9 @@ public abstract class AbstractGenerator {
         return false;
     }
 
+    /**
+     * 判断是否有效的setter函数
+     */
     protected boolean isValidSetter(TypeElement type, ExecutableElement method) {
         if (!isValidGetterSetterName(method, "set")) {
             return false;
@@ -95,7 +119,9 @@ public abstract class AbstractGenerator {
         return true;
     }
 
-
+    /**
+     * 判断是否有效的getter函数
+     */
     protected boolean isValidGetter(TypeElement type, ExecutableElement method) {
         if (!isValidGetterSetterName(method, "get")) {
             return false;
@@ -132,10 +158,20 @@ public abstract class AbstractGenerator {
         return Character.isUpperCase(c);
     }
 
+    /**
+     * 获取成员名称
+     * @param field
+     * @return
+     */
     protected String getFieldName(VariableElement field) {
         return field.getSimpleName().toString();
     }
 
+    /**
+     * 根据注解的name定义生成Json属性名。
+     * @param field
+     * @return
+     */
     protected String getJsonName(VariableElement field) {
         String jsonNameFromAnnotation = ElementUtils.getFieldAnnotationValue(field, JSONField.class, "name");
         if (!StringUtil.isEmpty(jsonNameFromAnnotation)) {
@@ -150,13 +186,22 @@ public abstract class AbstractGenerator {
         return field.getSimpleName().toString();
     }
 
-
+    /**
+     * 根据getter和setter函数生成Json属性名
+     * @param method
+     * @return
+     */
     protected String getNameFromGetterSetter(ExecutableElement method) {
         String methodName = method.getSimpleName().toString();
         methodName = getNameFromGetterSetter(methodName);
         return methodName.substring(0);
     }
 
+    /**
+     * 生成json属性名
+     * @param method
+     * @return
+     */
     protected String getJsonName(ExecutableElement method) {
         String jsonNameFromAnnotation = ElementUtils.getFieldAnnotationValue(method, JSONField.class, "name");
         if (!StringUtil.isEmpty(jsonNameFromAnnotation)) {

@@ -16,5 +16,8 @@
 
 package com.alibaba.android.jsonlube;
 
+/**
+ * 确保内部的类和自动生成的Java类不会被Proguard混淆
+ */
 public @interface ProguardKeep {
 }

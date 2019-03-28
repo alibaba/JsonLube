@@ -28,6 +28,9 @@ import static com.alibaba.android.jsonlube.compiler.TypesUtils.ANDROID_JSON_OBJE
 import static com.alibaba.android.jsonlube.compiler.TypesUtils.ANDROID_JSON_ARRAY;
 import static com.alibaba.android.jsonlube.compiler.TypesUtils.ANDROID_JSON_EXCEPTION;
 
+/**
+ * 自动生成序列化代码
+ */
 public class JsonSerializerGenerator extends AbstractGenerator {
 
 
