@@ -22,7 +22,7 @@ JsonLube用于将Json对象转成JAVA Bean对象，不同于传统在运行时�
 //1. 在代码中直接调用 JsonLube.fromJson()将Json对象转成Java bean对象。
 Teacher teacherBean = JsonLube.fromJson(jsonData, Teacher.class);
 
-//2. 在Teacher类的定义中加上@ToJson注解
+//2. 在Teacher类的定义中加上@FromJson注解
 @FromJson
 public class Teacher {
 	...
