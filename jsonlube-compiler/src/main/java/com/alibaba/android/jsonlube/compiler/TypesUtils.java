@@ -268,6 +268,9 @@ public final class TypesUtils {
      */
     public static boolean isFastJsonObject(TypeMirror typeMirror, Elements elements, Types types) {
         Element element = elements.getTypeElement(FASTJSON_OBJECT.reflectionName());
+        if (element == null) {
+            return false;
+        }
         TypeMirror androidJsonObjectType = element.asType();
         return types.isAssignable(typeMirror, androidJsonObjectType);
     }
@@ -281,6 +284,9 @@ public final class TypesUtils {
      */
     public static boolean isFastJsonArray(TypeMirror typeMirror, Elements elements, Types types) {
         Element element = elements.getTypeElement(FASTJSON_ARRAY.reflectionName());
+        if (element == null) {
+            return false;
+        }
         TypeMirror androidJsonObjectType = element.asType();
         return types.isAssignable(typeMirror, androidJsonObjectType);
     }
