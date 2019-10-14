@@ -20,8 +20,8 @@ apply plugin: 'java-library'
 apply plugin: "com.github.johnrengelman.shadow"
 apply plugin: 'com.jfrog.bintray'
 
-sourceCompatibility = JavaVersion.VERSION_1_7
-targetCompatibility = JavaVersion.VERSION_1_7
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
@@ -56,10 +56,10 @@ bintray {
         vcsUrl = 'https://github.com/alibaba/jsonlube'
 
         version {
-            name = '1.0.0.0'
+            name = '1.0.0.7'
             desc = 'A json parser generator in compile time.'
             released  = new Date()
-            vcsTag = '1.0.0.0'
+            vcsTag = '1.0.0.7'
         }
     }
 }
@@ -73,7 +73,7 @@ publishing {
     publications {
         maven_android(MavenPublication) {
             groupId "com.alibaba.android"
-            version "1.0.0.0"
+            version "1.0.0.7"
             artifactId "jsonlube-compiler"
             artifact("$buildDir/libs/jsonlube-compiler.jar")
             artifact(sourceJar)
@@ -82,14 +82,14 @@ publishing {
 }
 
 dependencies {
-    compile files(fileTree(dir: 'libs', includes: ['*.jar']))
-    compile project(':jsonlube-annotations')
-    compile 'com.squareup:javapoet:1.10.0'
-    compile 'com.alibaba:fastjson:1.1.67.android'
-    compile 'com.google.auto:auto-common:0.9'
-    compile 'com.google.auto.service:auto-service:1.0-rc4'
-    testCompile 'junit:junit:4.12'
-    testCompile 'com.google.testing.compile:compile-testing:0.13'
-    testCompile group: 'com.vaadin.external.google', name: 'android-json', version: '0.0.20131108.vaadin1'
-    compile files(org.gradle.internal.jvm.Jvm.current().toolsJar)
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':jsonlube-annotations')
+    implementation 'com.squareup:javapoet:1.10.0'
+    implementation 'com.alibaba:fastjson:1.1.67.android'
+    implementation 'com.google.auto:auto-common:0.9'
+    implementation 'com.google.auto.service:auto-service:1.0-rc4'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'com.google.testing.compile:compile-testing:0.13'
+    testImplementation group: 'com.vaadin.external.google', name: 'android-json', version: '0.0.20131108.vaadin1'
+    implementation files(org.gradle.internal.jvm.Jvm.current().toolsJar)
 }

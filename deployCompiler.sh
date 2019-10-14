@@ -1,0 +1,1 @@
+./gradlew :jsonlube-compiler:clean :jsonlube-compiler:shadowJar :jsonlube-compiler:shadowJar :jsonlube-compiler:bintrayUpload
