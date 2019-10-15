@@ -17,6 +17,7 @@
 package com.alibaba.android.jsonlube.compiler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.lang.model.element.ExecutableElement;
@@ -107,6 +108,29 @@ public class ParserClassGenerator extends AbstractGenerator {
                                     boolean isGetterSetter, ExecutableElement setter, ExecutableElement getter) {
         if (isPrimaryOrString(type)) {
             tryAddPrimaryAndStringStatement(builder, type, fieldName, jsonName, isGetterSetter, setter, getter);
+        } else if (TypesUtils.isHashMapType(mTypeUtils, type)){
+            TypeMirror genericType = TypesUtils.getCollectionParameterizedType(type);
+            TypeElement element = (TypeElement) mTypeUtils.asElement(genericType);
+            ClassName className = ClassName.get(element);
+
+            builder.addStatement("$T $LAndroidJson = data.optJSONObject($S)", ANDROID_JSON_OBJECT, fieldName, jsonName);
+            builder.beginControlFlow("if ($LAndroidJson != null)", fieldName);
+            builder.addStatement("java.util.Iterator<String> keys = $LAndroidJson.keys();", fieldName);
+
+            builder.addStatement("$T<String, $T> $LMap = new $T<String, $T>()", HashMap.class, className, fieldName, HashMap.class, className);
+            builder.beginControlFlow("while (keys.hasNext())");
+            builder.addStatement("String key = keys.next();");
+
+            if (isPrimary(genericType) || isString(genericType)) {
+                tryGetPrimaryAndStringStatement(builder, genericType, fieldName);
+            } else {
+                ClassName parseClass = generateClass(element);
+                builder.addStatement("$T item = $T.parse($LAndroidJson.optJSONObject(key))", element, parseClass, fieldName);
+            }
+            builder.addStatement("$LMap.put(key, item)", fieldName);
+            builder.endControlFlow();
+            setFieldValue(builder, fieldName, isGetterSetter, setter, "Map");
+            builder.endControlFlow();
         } else if (TypesUtils.isListType(mTypeUtils, type)) {
             TypeMirror genericType = TypesUtils.getCollectionParameterizedType(type);
             TypeElement element = (TypeElement) mTypeUtils.asElement(genericType);
@@ -215,6 +239,28 @@ public class ParserClassGenerator extends AbstractGenerator {
         return true;
     }
 
+    private boolean tryGetPrimaryAndStringStatement(MethodSpec.Builder builder, TypeMirror fieldClass, String fieldName) {
+        if (fieldClass.getKind() == TypeKind.INT) {
+            getPrimary(builder, int.class, fieldName, "Int");
+        } else if (TypesUtils.isString(fieldClass)) {
+            getPrimary(builder, String.class, fieldName, "String");
+        } else if (fieldClass.getKind() == TypeKind.LONG) {
+            getPrimary(builder, long.class, fieldName, "Long");
+        } else if (fieldClass.getKind() == TypeKind.DOUBLE) {
+            getPrimary(builder, double.class, fieldName, "Double");
+        } else if (fieldClass.getKind() == TypeKind.FLOAT) {
+            getPrimary(builder, float.class, fieldName, "Double");
+        } else if (fieldClass.getKind() == TypeKind.BYTE) {
+            getPrimary(builder, float.class, fieldName, "Int");
+        } else if (TypesUtils.isBooleanType(fieldClass)) {
+            getPrimary(builder, boolean.class, fieldName, "Boolean");
+        } else {
+            return false;
+        }
+
+        return true;
+    }
+
     private boolean tryGetPrimaryAndStringFromArray(MethodSpec.Builder builder, TypeMirror fieldClass, String fieldName) {
         if (fieldClass.getKind() == TypeKind.INT) {
             getPrimaryFromArray(builder, int.class, fieldName, "Int");
@@ -237,6 +283,10 @@ public class ParserClassGenerator extends AbstractGenerator {
 
     private void getPrimaryFromArray(MethodSpec.Builder builder, Class<?> type, String fieldName, String typeName) {
         builder.addStatement("$T item = $LJsonArray.opt$L(i)", type, fieldName, typeName);
+    }
+
+    private void getPrimary(MethodSpec.Builder builder, Class<?> type, String fieldName, String typeName) {
+        builder.addStatement("$T item = $LAndroidJson.opt$L(key)", type, fieldName, typeName);
     }
 
     private void addPrimaryStatement(MethodSpec.Builder builder, String fieldName, String jsonName, String typeName, boolean isGetterSetter,

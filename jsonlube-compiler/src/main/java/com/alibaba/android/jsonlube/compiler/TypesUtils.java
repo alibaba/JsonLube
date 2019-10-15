@@ -56,6 +56,7 @@ public final class TypesUtils {
     private static final String JAVA_UTIL_ARRAYLIST = "java.util.ArrayList<?>";
     private static final String JAVA_UTIL_ARRAYLIST_UNTYPED = "java.util.ArrayList";
     private static final String JAVA_UTIL_HASHMAP = "java.util.HashMap<?,?>";
+    private static final String JAVA_UTIL_MAP = "java.util.Map<?,?>";
     private static final String JAVA_UTIL_HASHMAP_UNTYPED = "java.util.HashMap";
     private static final String JAVA_UTIL_QUEUE = "java.util.Queue<?>";
     private static final String JAVA_UTIL_QUEUE_UNTYPED = "java.util.Queue";
@@ -85,6 +86,11 @@ public final class TypesUtils {
 
     public static boolean isArrayType(TypeMirror typeMirror) {
         return TypeKind.ARRAY.equals(typeMirror.getKind());
+    }
+
+    public static boolean isHashMapType(Types typeUtil, TypeMirror typeMirror) {
+        CollectionType type = getCollectionType(typeUtil, typeMirror);
+        return type == CollectionType.HASHMAP;
     }
 
     public static CollectionType getCollectionType(Types typeUtil, TypeMirror typeMirror) {

@@ -99,6 +99,61 @@
         }
       ]
     }
-  ]
+  ],
+  "studentMap":{
+    "zhangsan":{
+      "name":"zhangsan",
+      "age":10,
+      "sex":1,
+      "grade":1,
+      "favoriteSubject":{
+        "subjectName":"music",
+        "subjectScore":90.1
+      },
+      "subjects":[
+        {
+          "subjectName":"music",
+          "subjectScore":90.1
+        },
+        {
+          "subjectName":"literature",
+          "subjectScore":80.1
+        },
+        {
+          "subjectName":"mathematics",
+          "subjectScore":70.1
+        }
+      ]
+    },
+    "lisi":{
+      "name":"lisi",
+      "age":10,
+      "sex":1,
+      "grade":1,
+      "favoriteSubject":{
+        "subjectName":"music",
+        "subjectScore":90.1
+      },
+      "subjects":[
+        {
+          "subjectName":"music",
+          "subjectScore":90.1
+        },
+        {
+          "subjectName":"literature",
+          "subjectScore":80.1
+        },
+        {
+          "subjectName":"mathematics",
+          "subjectScore":70.1
+        }
+      ]
+    }
+  },
+  "names":{
+    "Zhang": "San",
+    "Li": "Si",
+    "Wang": "Wu"
+  }
 
 }

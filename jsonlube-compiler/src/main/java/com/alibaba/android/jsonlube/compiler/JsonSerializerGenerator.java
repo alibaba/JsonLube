@@ -22,6 +22,7 @@ import com.squareup.javapoet.MethodSpec;
 import javax.lang.model.element.*;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.TypeMirror;
+
 import java.util.List;
 
 import static com.alibaba.android.jsonlube.compiler.TypesUtils.ANDROID_JSON_OBJECT;
@@ -106,7 +107,13 @@ public class JsonSerializerGenerator extends AbstractGenerator {
             } else {
                 builder.addStatement("data.put($S, bean.$L)", jsonName, getter);
             }
-        } else if (TypesUtils.isListType(mTypeUtils, fieldType)) {
+        } else if (TypesUtils.isHashMapType(mTypeUtils, fieldType)){
+            TypeMirror genericType = TypesUtils.getCollectionParameterizedType(fieldType);
+            TypeElement element = (TypeElement) mTypeUtils.asElement(genericType);
+            ClassName className = ClassName.get(element);
+
+            serializerHashMap(builder, fieldName, jsonName, isGetterSetter, getter, genericType, className);
+        }else if (TypesUtils.isListType(mTypeUtils, fieldType)) {
             TypeMirror genericType = TypesUtils.getCollectionParameterizedType(fieldType);
             TypeElement element = (TypeElement) mTypeUtils.asElement(genericType);
             ClassName className = ClassName.get(element);
@@ -154,6 +161,50 @@ public class JsonSerializerGenerator extends AbstractGenerator {
         }
     }
 
+    private void serializerHashMap(MethodSpec.Builder builder, String fieldName, String jsonName,
+                                   boolean isGetterSetter, ExecutableElement getter, TypeMirror genericType, ClassName genericClassName) {
+        if (!isGetterSetter) {
+            builder.beginControlFlow("if (bean.$L != null)", fieldName);
+            builder.addStatement("$T $LJsonObject = new $T()", ANDROID_JSON_OBJECT, fieldName, ANDROID_JSON_OBJECT);
+            builder.beginControlFlow("for (java.util.Map.Entry<String, $T> entry : bean.$L.entrySet())", genericClassName, fieldName);
+        } else {
+            builder.beginControlFlow("if (bean.$L != null)", getter);
+            builder.addStatement("$T $LJsonObject = new $T()", ANDROID_JSON_OBJECT, fieldName, ANDROID_JSON_OBJECT);
+            builder.beginControlFlow("for (java.util.Map.Entry<String, $T> entry : bean.$L.entrySet())", genericClassName, getter);
+        }
+
+        if (TypesUtils.isPrimitive(genericType) || TypesUtils.isAndroidJsonObject(genericType, mElementUtils, mTypeUtils)
+                || TypesUtils.isAndroidJsonArray(genericType, mElementUtils, mTypeUtils) || TypesUtils.isString(genericType)) {
+            builder.addStatement("$LJsonObject.put(entry.getKey(), entry.getValue())", fieldName);
+        } else if (TypesUtils.isFastJsonArray(genericType, mElementUtils, mTypeUtils) || TypesUtils.isFastJsonObject(genericType, mElementUtils, mTypeUtils)) {
+            builder.beginControlFlow("if (entry.getValue() != null)");
+
+            builder.addStatement("String content = entry.getValue().toString()");
+            builder.addStatement("$T androidJsonObject = new $T(content)", ANDROID_JSON_OBJECT, ANDROID_JSON_OBJECT);
+            builder.addStatement("$LJsonObject.put(entry.getKey(), androidJsonObject)", fieldName);
+
+            builder.endControlFlow();
+        } else if (TypesUtils.isArrayType(genericType) || TypesUtils.isListType(mTypeUtils, genericType)) {
+            System.out.println("is array type --> " + genericClassName);
+            // not support yet
+        } else if (TypesUtils.isHashMapType(mTypeUtils, genericType)){
+            System.out.println("is hashmap type --> " + genericClassName);
+            //not support yet
+        } else {
+            builder.beginControlFlow("if (entry.getValue() != null)");
+            System.out.println("Generic class in array --> " + genericClassName.simpleName());
+            ClassName serializerClass = generateClass((TypeElement) mTypeUtils.asElement(genericType));
+
+            builder.addStatement("$LJsonObject.put(entry.getKey(), $T.serialize(entry.getValue()))", fieldName, serializerClass);
+
+            builder.endControlFlow();
+        }
+
+        builder.endControlFlow();
+        builder.addStatement("data.put($S, $LJsonObject)", jsonName, fieldName);
+        builder.endControlFlow();
+
+    }
     private void serializerListAndArray(MethodSpec.Builder builder, String fieldName, String jsonName,
                                         boolean isGetterSetter, ExecutableElement getter, TypeMirror genericType,  ClassName genericClassName) {
         if (!isGetterSetter) {
@@ -169,7 +220,7 @@ public class JsonSerializerGenerator extends AbstractGenerator {
         if (TypesUtils.isPrimitive(genericType) || TypesUtils.isAndroidJsonObject(genericType, mElementUtils, mTypeUtils)
                 || TypesUtils.isAndroidJsonArray(genericType, mElementUtils, mTypeUtils) || TypesUtils.isString(genericType)) {
             builder.addStatement("$LJsonArray.put(item)", fieldName);
-        } else if (TypesUtils.isFastJsonArray(genericType, mElementUtils, mTypeUtils)) {
+        } else if (TypesUtils.isFastJsonArray(genericType, mElementUtils, mTypeUtils) || TypesUtils.isFastJsonObject(genericType, mElementUtils, mTypeUtils)) {
             builder.beginControlFlow("if (item != null)");
 
             builder.addStatement("String content = item.toString()");
@@ -177,17 +228,12 @@ public class JsonSerializerGenerator extends AbstractGenerator {
             builder.addStatement("$LJsonArray.put(androidJsonObject)", fieldName);
 
             builder.endControlFlow();
-        } else if (TypesUtils.isFastJsonObject(genericType, mElementUtils, mTypeUtils)) {
-            builder.beginControlFlow("if (item != null)");
-
-            builder.addStatement("String content = item.toString()");
-            builder.addStatement("$T androidJsonObject = new $T(content)", ANDROID_JSON_ARRAY, ANDROID_JSON_ARRAY);
-            builder.addStatement("$LJsonArray.put(androidJsonObject)", fieldName);
-
-            builder.endControlFlow();
         } else if (TypesUtils.isArrayType(genericType) || TypesUtils.isListType(mTypeUtils, genericType)) {
             System.out.println("is array type --> " + genericClassName);
             // not support yet
+        } else if (TypesUtils.isHashMapType(mTypeUtils, genericType)){
+            System.out.println("is hashmap type --> " + genericClassName);
+            //not support yet
         } else {
             builder.beginControlFlow("if (item != null)");
             System.out.println("Generic class in array --> " + genericClassName.simpleName());

@@ -16,6 +16,7 @@
 
 package com.alibaba.android.jsonlube.testbean;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.alibaba.android.jsonlube.FromJson;
@@ -35,4 +36,15 @@ public class Teacher extends People {
 
     public Student bestStudent;
 
+    public HashMap<String, Student> studentMap;
+
+    private HashMap<String, String> names;
+
+    public HashMap<String, String> getNames() {
+        return names;
+    }
+
+    public void setNames(HashMap<String, String> names) {
+        this.names = names;
+    }
 }
