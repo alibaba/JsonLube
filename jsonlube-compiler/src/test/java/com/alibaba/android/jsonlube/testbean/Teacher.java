@@ -22,6 +22,8 @@ import java.util.List;
 import com.alibaba.android.jsonlube.FromJson;
 import com.alibaba.android.jsonlube.ToJson;
 
+import org.json.JSONObject;
+
 /**
  * Created by shangjie on 2018/2/27.
  */
@@ -47,4 +49,6 @@ public class Teacher extends People {
     public void setNames(HashMap<String, String> names) {
         this.names = names;
     }
+
+    public JSONObject params;
 }

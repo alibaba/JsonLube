@@ -154,6 +154,10 @@
     "Zhang": "San",
     "Li": "Si",
     "Wang": "Wu"
+  },
+  "params": {
+    "x": 1,
+    "y": "xxxx"
   }
 
 }

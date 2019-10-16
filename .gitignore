@@ -6,3 +6,8 @@ build/
 *.class
 *.iml
 local.properties
+.classpath
+.project
+.settings/
+pom-default 2.xml
+pom-default.xml

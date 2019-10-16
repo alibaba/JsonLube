@@ -175,7 +175,7 @@ public class ParserClassGenerator extends AbstractGenerator {
             builder.endControlFlow();
 
         } else if (isAndroidJsonObject(type)) {
-            addPrimaryStatement(builder, fieldName, jsonName, "JSONObject", isGetterSetter, setter, getter);
+            addObjectStatement(builder, fieldName, jsonName, "JSONObject", isGetterSetter, setter, getter);
         } else if (isFastJsonObject(type)) {
             builder.addStatement("$T $LAndroidJson = data.optJSONObject($S)", ANDROID_JSON_OBJECT, fieldName, jsonName);
             builder.beginControlFlow("if ($LAndroidJson != null)", fieldName);
@@ -296,6 +296,19 @@ public class ParserClassGenerator extends AbstractGenerator {
         } else {
             if (getter != null) {
                 builder.addStatement("bean.$L(data.opt$L($S, bean.$L()))", setter.getSimpleName(), typeName, jsonName, getter.getSimpleName().toString());
+            } else {
+                builder.addStatement("bean.$L(data.opt$L($S))", setter.getSimpleName(), typeName, jsonName);
+            }
+        }
+    }
+
+    private void addObjectStatement(MethodSpec.Builder builder, String fieldName, String jsonName, String typeName, boolean isGetterSetter,
+                                    ExecutableElement setter, ExecutableElement getter) {
+        if (!isGetterSetter) {
+            builder.addStatement("bean.$L = data.opt$L($S)", fieldName, typeName, jsonName);
+        } else {
+            if (getter != null) {
+                builder.addStatement("bean.$L(data.opt$L($S))", setter.getSimpleName(), typeName, jsonName);
             } else {
                 builder.addStatement("bean.$L(data.opt$L($S))", setter.getSimpleName(), typeName, jsonName);
             }
