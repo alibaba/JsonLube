@@ -176,6 +176,8 @@ public class ParserClassGenerator extends AbstractGenerator {
 
         } else if (isAndroidJsonObject(type)) {
             addObjectStatement(builder, fieldName, jsonName, "JSONObject", isGetterSetter, setter, getter);
+        } else if (isAndroidJsonArray(type)) {
+            addObjectStatement(builder, fieldName, jsonName, "JSONArray", isGetterSetter, setter, getter);
         } else if (isFastJsonObject(type)) {
             builder.addStatement("$T $LAndroidJson = data.optJSONObject($S)", ANDROID_JSON_OBJECT, fieldName, jsonName);
             builder.beginControlFlow("if ($LAndroidJson != null)", fieldName);
@@ -204,6 +206,10 @@ public class ParserClassGenerator extends AbstractGenerator {
 
     private boolean isAndroidJsonObject(TypeMirror typeMirror) {
         return TypesUtils.isAndroidJsonObject(typeMirror, mElementUtils, mTypeUtils);
+    }
+
+    private boolean isAndroidJsonArray(TypeMirror typeMirror) {
+        return TypesUtils.isAndroidJsonArray(typeMirror, mElementUtils, mTypeUtils);
     }
 
     private boolean isFastJsonObject(TypeMirror typeMirror) {

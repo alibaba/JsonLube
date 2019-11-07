@@ -22,6 +22,7 @@ import java.util.List;
 import com.alibaba.android.jsonlube.FromJson;
 import com.alibaba.android.jsonlube.ToJson;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -51,4 +52,7 @@ public class Teacher extends People {
     }
 
     public JSONObject params;
+
+    public JSONArray rules;
+
 }
